@@ -24,14 +24,15 @@ int main(int argc, char* argv[]){
 	int j = hex2bytes(skeyHex, strlen(skeyHex), skey);
 	crypt.PrepareKey(skey, 32, &key);
 
-		
 	// use a simple CBC method to encrypt our flag string
 	uint8_t cipherResult[4][16];
 	// prepare flag
 	const char *flag = "xdctf{N3v3r_buy_btc_un1es_u_want_2_know_crypt0_lol_padding_now}\0";
 	uint8_t flagArray[4][16];
+	char xxx[200];
 	assert(strlen(flag)+1==64);
 	memcpy(flagArray, flag, 64);
+	bytes2hex((uint8_t *)flagArray,64,xxx);printf("%s\n", xxx);	
 	// prepare IV
 	const char *ivHex  = "DEADBEEF0BADC0DE8086012450301120";	//our iv
 	assert(strlen(ivHex)==32);
@@ -45,8 +46,8 @@ int main(int argc, char* argv[]){
 			memcpy(midKey, cipherResult[round], 16);
 		}
 		memcpy(flagArray, cipherResult, 64);
-		printf("%s", flagArray);
 	}
+	bytes2hex((uint8_t *)flagArray,64,xxx);printf("%s\n", xxx);	
 
 	// decryption test
 	for ( int loop = 0 ; loop < 1000000 ; loop++ ){
@@ -59,7 +60,7 @@ int main(int argc, char* argv[]){
 		}
 		memcpy(cipherResult, flagArray, 64);
 	}
-	printf("%s", cipherResult);
+	bytes2hex((uint8_t *)cipherResult,64,xxx);printf("%s\n", xxx);	
 			
 
 
