@@ -25,34 +25,42 @@ int main(int argc, char* argv[]){
 	crypt.PrepareKey(skey, 32, &key);
 
 		
-	// use a simple CFB method to encrypt our flag string
+	// use a simple CBC method to encrypt our flag string
 	uint8_t cipherResult[4][16];
 	// prepare flag
-	const char *flag = "xdctf{N3v3r_buy_btc_un1es_u_want_2_learn_crypt0_lol_padding_now}";
+	const char *flag = "xdctf{N3v3r_buy_btc_un1es_u_want_2_know_crypt0_lol_padding_now}\0";
 	uint8_t flagArray[4][16];
-	assert(strlen(flag)==64);
+	assert(strlen(flag)+1==64);
 	memcpy(flagArray, flag, 64);
 	// prepare IV
 	const char *ivHex  = "DEADBEEF0BADC0DE8086012450301120";	//our iv
-	uint8_t iv[16];
 	assert(strlen(ivHex)==32);
-	hex2bytes(ivHex, strlen(ivHex), iv);
 	// encryption is for 100 rounds
-	for ( int loop = 0 ; loop < 100000000 ; loop++ ){
+	for ( int loop = 0 ; loop < 1000000 ; loop++ ){
 		uint8_t midKey[16];
-		crypt.Encrypt(&key, iv, midKey);
-		LongXor(midKey, flagArray[0]);
-		memcpy(cipherResult[0], midKey, 16);
-		for ( int round = 1 ; round < 4 ; round++ ){
-			crypt.Encrypt(&key, cipherResult[round-1], midKey);
+		hex2bytes(ivHex, strlen(ivHex), midKey);
+		for ( int round = 0 ; round < 4 ; round++ ){
 			LongXor(midKey, flagArray[round]);
-			memcpy(cipherResult[round], midKey, 16);
+			crypt.Encrypt(&key, midKey, cipherResult[round]);
+			memcpy(midKey, cipherResult[round], 16);
 		}
 		memcpy(flagArray, cipherResult, 64);
-		if (!strcmp((char*)cipherResult, flag)){
-			printf("%s\n", flagArray);
-		}
+		printf("%s", flagArray);
 	}
+
+	// decryption test
+	for ( int loop = 0 ; loop < 1000000 ; loop++ ){
+		uint8_t midKey[16];
+		hex2bytes(ivHex, strlen(ivHex), midKey);
+		for ( int round = 0 ; round < 4 ; round++ ){
+			crypt.Decrypt(&key, cipherResult[round], flagArray[round]);
+			LongXor(flagArray[round], midKey);
+			memcpy(midKey, cipherResult[round],16);
+		}
+		memcpy(cipherResult, flagArray, 64);
+	}
+	printf("%s", cipherResult);
+			
 
 
 	return 0;
