@@ -1,22 +1,20 @@
-CC = g++
-CFLAGS = -g -Wall -O2
+CXX = g++
+CXXFLAGS = -g -Wall -O4 -mavx
 
-TARGET = lucky_or_locky
-SOLVER = lucky_melon
+PROGRAMS = locky_or_lucky lucky_melon
+BLOCKS   = twofish.o common.o chain.o sha384.o flag.o
 
-COMMON = common
+all : $(PROGRAMS)
 
-default: $(TARGET) $(SOLVER)
+locky_or_lucky: problem.o $(BLOCKS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+	
+lucky_melon: solver.o $(BLOCKS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
-$(TARGET): twofish.o problem.cpp  $(COMMON).cpp $(COMMON).h
-	$(CC) $(CFLAGS) -o $(TARGET) problem.cpp $(COMMON).cpp twofish.o
-
-$(SOLVER): twofish.o solver.cpp $(COMMON).h $(COMMON).cpp
-	$(CC) $(CFLAGS) -o $(SOLVER) solver.cpp $(COMMON).cpp twofish.o
-
-twofish.o: twofish.cpp twofish.h
-	$(CC) $(CFLAGS) -o twofish.o -c twofish.cpp
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $^
 
 clean:
-	$(RM) $(TARGET) $(SOLVER)
+	$(RM) $(PROGRAMS)
 	$(RM) *.o *.~
