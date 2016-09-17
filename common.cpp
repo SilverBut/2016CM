@@ -1,51 +1,27 @@
 #include "common.h"
 
-void FlagDecrypt(const uint8_t* key, const uint8_t* iv, const uint8_t* cipher, uint8_t* decrypted){
-	Twofish crypt;
-	TwofishKey twKey;
-
-	uint8_t cipherResult[4][16];
-	uint8_t flagArray[4][16];
-	uint8_t midKey[16];
-	memcpy(flagArray, cipher, 64);
-	crypt.PrepareKey(key, 32, &twKey);
-	for ( int loop = 0 ; loop < 1000000 ; loop++ ){
-		memcpy(midKey, iv, 16);
-		for ( int round = 0 ; round < 4 ; round++ ){
-			crypt.Decrypt(&twKey, cipherResult[round], flagArray[round]);
-			LongXor(flagArray[round], midKey);
-			memcpy(midKey, cipherResult[round],16);
-		}
-		memcpy(cipherResult, flagArray, 64);
+void long_xor( uint8_t* dst, uint8_t* src, size_t length){
+	for ( int i = 0 ; i*16 < length ; i++ ){
+		xor_16byte( &dst[i*16], &src[i*16] );
 	}
-	memcpy(decrypted, cipherResult, 64);
 }
 
-void FlagEncrypt(const uint8_t* key, const uint8_t* iv, const uint8_t* flag, uint8_t* encrypted){
-	Twofish crypt;
-	TwofishKey twKey;
-
-	uint8_t cipherResult[4][16];
-	uint8_t flagArray[4][16];
-	uint8_t midKey[16];
-	memcpy(flagArray, flag, 64);
-	crypt.PrepareKey(key, 32, &twKey);
-	for ( int loop = 0 ; loop < 1000000 ; loop++ ){
-		memcpy(midKey, iv, 16);
-		for ( int round = 0 ; round < 4 ; round++ ){
-			LongXor(midKey, flagArray[round]);
-			crypt.Encrypt(&twKey, midKey, cipherResult[round]);
-			memcpy(midKey, cipherResult[round], 16);
-		}
-		memcpy(flagArray, cipherResult, 64);
-	}
-	memcpy(encrypted, cipherResult, 64);
+void xor_16byte ( uint8_t* dst, uint8_t* src){
+	__m128 x;
+	__m128 y;
+	x = _mm_load_ps((float*)dst);
+	y = _mm_load_ps((float*)src);
+	x = _mm_xor_ps(x,y);
+	_mm_storeu_ps((float*)dst, x);
 }
 
-void LongXor( uint8_t* src, uint8_t* dst ){
-	for ( int i = 0 ; i < 16 ; i++ ){
-		src[i] ^= dst[i];
-	}
+void xor_32byte ( uint8_t* dst, uint8_t* src){
+	__m256 x;
+	__m256 y;
+	x = _mm256_load_ps((float*)dst);
+	y = _mm256_load_ps((float*)src);
+	x = _mm256_xor_ps(x,y);
+	_mm256_storeu_ps((float*)dst, x);
 }
 
 uint bytes2hex(const uint8_t* bytes, uint blen, char* hex){
@@ -76,22 +52,6 @@ uint hex2bytes(const char* hex, uint blen, uint8_t* bytes){
      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // hijklmno
      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // pqrstuvw
      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // xyz{|}~.
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ........
-     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  // ........
 	};
 	bzero(bytes, blen);
 	for ( pos = 0 ; ((pos < (blen*2)) && (pos < strlen(hex))) ; pos+=2 ){

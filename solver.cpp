@@ -3,6 +3,10 @@
 #include <cstring>
 #include "twofish.h"
 #include "common.h"
+#include "chain.h"
+#include "sha384.h"
+
+#define LEN_CHAIN_HASH 32
 
 int main(int argc, char* argv[]){
 
@@ -48,9 +52,10 @@ int main(int argc, char* argv[]){
 	
 	// Get hash of the new chain and old chain
 	std::cout << "Getting hash of two chains...";
-	/*
+	
 	uint8_t old_chain_hash[LEN_CHAIN_HASH];
 	uint8_t new_chain_hash[LEN_CHAIN_HASH];
+	/*
 	old_chain.hash(old_chain_hash);
 	new_chain.hash(new_chain_hash);
 	/**/
@@ -58,14 +63,17 @@ int main(int argc, char* argv[]){
 
 	// Generate iv(first 16 bytes of sha384) and Key(other bytes);
 	std::cout << "Calculating IV and KEYs...";
-	/*
 	long_xor(old_chain_hash, new_chain_hash, LEN_CHAIN_HASH);
-	uint8_t key_hash[SHA384_LENGTH];
-	sha384(old_chain_hash, LEN_CHAIN_HASH, key_hash);
+	uint8_t key_hash[SHA384::DIGEST_SIZE];
+	memset(key_hash,0,SHA384::DIGEST_SIZE);
+	SHA384 sha384_ctx = SHA384();
+	sha384_ctx.init();
+	sha384_ctx.update( old_chain_hash, LEN_CHAIN_HASH );
+	sha384_ctx.final(key_hash);
 	uint8_t iv[16];
 	uint8_t skey[32];
 	memcpy(iv, key_hash, 16);
-	memcpy(skey, key_hash[16], 32);
+	memcpy(skey, &key_hash[16], 32);
 	/**/
 	std::cout << "Succeed.\n";
 
@@ -74,8 +82,8 @@ int main(int argc, char* argv[]){
 	const char *flag = "xdctf{N3v3r_buy_btc_un1es_u_want_2_know_crypt0_lol_padding_now}\0";
 	const char *ivHex  = "DEADBEEF0BADC0DE8086012450301120";	//our iv
 	const char *skeyHex = "BADC0DE01234ABCD6789ABCD1234DEFFAABB2233BBAA22339988DDCC4455DDCC";
-	uint8_t iv[16];
-	uint8_t skey[32];
+	//uint8_t iv[16];
+	//uint8_t skey[32];
 	uint8_t flagArray[4][16];
 	uint8_t cipherResult[4][16];
 	memcpy(flagArray, flag, 64);
