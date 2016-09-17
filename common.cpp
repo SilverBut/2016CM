@@ -2,10 +2,11 @@
 #include <cstring>
 
 uint bytes2hex(const uint8_t* bytes, uint blen, char* hex){
-	for(int i = 0 ; i < blen ; i++){
+	for(uint i = 0 ; i < blen ; i++){
 		hex[i*2] = (uint8_t)(bytes[i]>>4)>9?(bytes[i]>>4)+'A'-0xA:(bytes[i]>>4)+'0';
 		hex[i*2+1] = (uint8_t)(bytes[i]&0xf)>9?(bytes[i]&0xf)+'A'-0xA:(bytes[i]&0xf)+'0';
 	}
+	return blen*2;
 }
 
 uint hex2bytes(const char* hex, uint blen, uint8_t* bytes){
