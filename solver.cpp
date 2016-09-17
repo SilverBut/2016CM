@@ -1,21 +1,74 @@
 #include <iostream>
+#include <fstream>
 #include <cstring>
-//#include "lucky_boy.hpp"
 #include "twofish.h"
 #include "common.h"
 
-#define MAX_TRIES 100000
-
-
 int main(int argc, char* argv[]){
-	int i = MAX_TRIES ;
-	//LuckyChain* chain = new LuckyChain;		//load a lucky chain, and try to solve for 200 blocks
-	//
-	//LuckyHash oldhash = LuckyChain -> getHash();	//Get old hash of the last block
-	//chain->LoadMoreBlock("moreblock.bin", 500);					//Try to calculate 500 new blocks
-	//
-	//LuckyHash newhash = LuckyChain -> getHash();	//Get new hash of the last block
-	//const char *keyHex = newhash;
+
+	std::cout << "Loading old blocks...";
+	// Get block info from the program itself
+	/*
+	Chain( uint8_t* )
+	Chain* old_chain = new Chain( load_res_from_program('chain_info') );
+	/**/
+	std::cout << "Succeed.\n";
+	
+	std::cout << "Loading standrad blocks...";
+	// Get block info from external files
+	/*
+	ifstream standrad_block_file;
+	size_t size = 0;
+	standrad_block_file.open(pStandradBlockName, ios::in|ios::binary|ios::ate );
+	if (inFile.is_open()){
+		char* standrad_block;
+		size = standrad_block_file.tellg();
+		standrad_block_file.seekg(0, ios::beg);
+		standrad_block = new char[size+1];
+		standrad_block_file.read(standrad_block, size);
+		standrad_block[size] = '\n';
+	} else {
+	  std::cout << "File NOT exists. Exiting.\n" << std::endl;
+		return -1;
+	}
+	Chain* new_chain = new Chain( standrad_block );
+	/**/
+	std::cout << "Succeed.\n";
+
+	// Verify if two chains are both acceptable, and connectable
+	std::cout << "Verifying now...";
+	/*
+	if ( !verify_integrity( old_chain, new_chain ) )
+	{
+		std::cout << "Failed.\n";
+		return -2;
+	}
+	/**/
+	std::cout << "Succeed.\n";
+	
+	// Get hash of the new chain and old chain
+	std::cout << "Getting hash of two chains...";
+	/*
+	uint8_t old_chain_hash[LEN_CHAIN_HASH];
+	uint8_t new_chain_hash[LEN_CHAIN_HASH];
+	old_chain.hash(old_chain_hash);
+	new_chain.hash(new_chain_hash);
+	/**/
+	std::cout << "Succeed.\n";
+
+	// Generate iv(first 16 bytes of sha384) and Key(other bytes);
+	std::cout << "Calculating IV and KEYs...";
+	/*
+	long_xor(old_chain_hash, new_chain_hash, LEN_CHAIN_HASH);
+	uint8_t key_hash[SHA384_LENGTH];
+	sha384(old_chain_hash, LEN_CHAIN_HASH, key_hash);
+	uint8_t iv[16];
+	uint8_t skey[32];
+	memcpy(iv, key_hash, 16);
+	memcpy(skey, key_hash[16], 32);
+	/**/
+	std::cout << "Succeed.\n";
+
 	char xxx[200];
 
 	const char *flag = "xdctf{N3v3r_buy_btc_un1es_u_want_2_know_crypt0_lol_padding_now}\0";
