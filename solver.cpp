@@ -6,7 +6,6 @@
 
 #define MAX_TRIES 100000
 
-void LongXor( uint8_t* src, uint8_t* dst );
 
 int main(int argc, char* argv[]){
 	int i = MAX_TRIES ;
@@ -17,59 +16,25 @@ int main(int argc, char* argv[]){
 	//
 	//LuckyHash newhash = LuckyChain -> getHash();	//Get new hash of the last block
 	//const char *keyHex = newhash;
-	const char *skeyHex = "BADC0DE01234ABCD6789ABCD1234DEFFAABB2233BBAA22339988DDCC4455DDCC";
-	Twofish crypt;
-	TwofishKey key;
-	uint8_t skey[32];
-	int j = hex2bytes(skeyHex, strlen(skeyHex), skey);
-	crypt.PrepareKey(skey, 32, &key);
-
-	// use a simple CBC method to encrypt our flag string
-	uint8_t cipherResult[4][16];
-	// prepare flag
-	const char *flag = "xdctf{N3v3r_buy_btc_un1es_u_want_2_know_crypt0_lol_padding_now}\0";
-	uint8_t flagArray[4][16];
 	char xxx[200];
-	assert(strlen(flag)+1==64);
-	memcpy(flagArray, flag, 64);
-	bytes2hex((uint8_t *)flagArray,64,xxx);printf("%s\n", xxx);	
-	// prepare IV
+
+	const char *flag = "xdctf{N3v3r_buy_btc_un1es_u_want_2_know_crypt0_lol_padding_now}\0";
 	const char *ivHex  = "DEADBEEF0BADC0DE8086012450301120";	//our iv
-	assert(strlen(ivHex)==32);
-	// encryption is for 100 rounds
-	for ( int loop = 0 ; loop < 1000000 ; loop++ ){
-		uint8_t midKey[16];
-		hex2bytes(ivHex, strlen(ivHex), midKey);
-		for ( int round = 0 ; round < 4 ; round++ ){
-			LongXor(midKey, flagArray[round]);
-			crypt.Encrypt(&key, midKey, cipherResult[round]);
-			memcpy(midKey, cipherResult[round], 16);
-		}
-		memcpy(flagArray, cipherResult, 64);
-	}
+	const char *skeyHex = "BADC0DE01234ABCD6789ABCD1234DEFFAABB2233BBAA22339988DDCC4455DDCC";
+	uint8_t iv[16];
+	uint8_t skey[32];
+	uint8_t flagArray[4][16];
+	uint8_t cipherResult[4][16];
+	memcpy(flagArray, flag, 64);
+	hex2bytes(skeyHex, strlen(skeyHex)/2, skey);
+	hex2bytes(ivHex, strlen(ivHex)/2, iv);
 	bytes2hex((uint8_t *)flagArray,64,xxx);printf("%s\n", xxx);	
-
-	// decryption test
-	for ( int loop = 0 ; loop < 1000000 ; loop++ ){
-		uint8_t midKey[16];
-		hex2bytes(ivHex, strlen(ivHex), midKey);
-		for ( int round = 0 ; round < 4 ; round++ ){
-			crypt.Decrypt(&key, cipherResult[round], flagArray[round]);
-			LongXor(flagArray[round], midKey);
-			memcpy(midKey, cipherResult[round],16);
-		}
-		memcpy(cipherResult, flagArray, 64);
-	}
+	FlagEncrypt(skey,iv,(uint8_t*)flagArray,(uint8_t*)cipherResult);
 	bytes2hex((uint8_t *)cipherResult,64,xxx);printf("%s\n", xxx);	
-			
-
+	FlagDecrypt(skey,iv,(uint8_t*)cipherResult, (uint8_t*)flagArray);
+	bytes2hex((uint8_t *)flagArray,64,xxx);printf("%s\n", xxx);	
 
 	return 0;
 }
 
-void LongXor( uint8_t* src, uint8_t* dst ){
-	for ( int i = 0 ; i < 16 ; i++ ){
-		src[i] ^= dst[i];
-	}
-}
 
