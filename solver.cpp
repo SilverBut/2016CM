@@ -6,7 +6,8 @@
 #include "chain.h"
 #include "sha384.h"
 
-#define LEN_CHAIN_HASH 32
+// it is 32
+#define LEN_CHAIN_HASH BLOCK_HASH_SIZE
 
 int main(int argc, char* argv[]){
 
