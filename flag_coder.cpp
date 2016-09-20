@@ -1,4 +1,4 @@
-#include "flag.h"
+#include "flag_coder.h"
 
 void FlagDecrypt(const uint8_t* key, const uint8_t* iv, const uint8_t* cipher, uint8_t* decrypted){
 	Twofish crypt;

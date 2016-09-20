@@ -1,7 +1,7 @@
 #include "common.h"
 
 void long_xor( uint8_t* dst, uint8_t* src, size_t length){
-	for ( int i = 0 ; i*16 < length ; i++ ){
+	for ( size_t i = 0 ; i*16 < length ; i++ ){
 		xor_16byte( &dst[i*16], &src[i*16] );
 	}
 }

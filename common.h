@@ -5,10 +5,9 @@
 #include <xmmintrin.h>	//128 op
 #include <immintrin.h>  //256 op
 #include "flag.h"
+#include "flag_coder.h"
 #define DEBUG
 
-//typedef unsigned short int uint8_t;
-//typedef unsigned int uint32_t;
 typedef unsigned int uint;
 
 uint hex2bytes(const char* hex, uint blen, uint8_t* bytes);
