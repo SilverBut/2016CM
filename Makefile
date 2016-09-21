@@ -1,8 +1,8 @@
-CXX = g++
-CXXFLAGS = -g -Wall -O4 -mavx -lcrypto
+CXX = gcc
+CXXFLAGS = -g -Wall -O4 -mavx -lcrypto -std=c++11
 
 PROGRAMS = problems generator
-BLOCKS   = twofish.o sha384.o flag_coder.o sha256.o
+BLOCKS   = common.o twofish.o sha384.o flag_coder.o sha256.o
 
 all : $(PROGRAMS)
 

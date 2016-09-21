@@ -1,6 +1,9 @@
 #pragma once
+#include "common.h"
 #include <string>
- 
+#include <cstring>
+#include <fstream>
+
 class SHA256
 {
 protected:

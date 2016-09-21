@@ -1,5 +1,3 @@
-#include <cstring>
-#include <fstream>
 #include "sha384.h"
  
 const unsigned long long SHA384::sha512_k[80] = //ULL = uint64

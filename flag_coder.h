@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common.h"
 #include "twofish.h"
 
 #define FLAG_ENCRYPT_COUNT 1000000
