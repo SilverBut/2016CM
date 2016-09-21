@@ -5,6 +5,7 @@
 #include "common.h"
 #include "chain.h"
 #include "sha384.h"
+#include "sha256.h"
 
 // it is 32
 #define LEN_CHAIN_HASH BLOCK_HASH_SIZE
@@ -77,6 +78,22 @@ int main(int argc, char* argv[]){
 	memcpy(skey, &key_hash[16], 32);
 	/**/
 	std::cout << "Succeed.\n";
+
+	//Try to calculate 125552
+	SHA256 sha256_ctx = SHA256();
+	sha256_ctx.init();
+	uint8_t x[80];
+	std::cout << "------------------\n";
+	const char* xvs = "0100000081cd02ab7e569e8bcd9317e2fe99f2de44d49ab2b8851ba4a308000000000000e320b6c2fffc8d750423db8b1eb942ae710e951ed797f7affc8892b0f1fc122bc7f5d74df2b9441a42a14695";
+	hex2bytes(xvs, 80, x);
+	sha256_ctx.update(x,80);
+	uint8_t x2[80];
+	sha256_ctx.final(x2);
+	sha256_ctx.init();
+	sha256_ctx.update(x2,32);
+	sha256_ctx.final(x);
+	bytes2hex((uint8_t *)x,32,(char*)x2);printf("%s\n", x2);	
+	std::cout << "------------------\n";
 
 	char xxx[200];
 
