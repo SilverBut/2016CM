@@ -1,6 +1,5 @@
 #include "flag_coder.h"
-
-void FlagDecrypt(const uint8_t* key, const uint8_t* iv, const uint8_t* cipher, uint8_t* decrypted){
+void FlagDecrypt(const uint8_t key[flag_key_len], const uint8_t iv[flag_iv_len], const uint8_t cipher[flag_len], char decrypted[flag_len]){
 	Twofish crypt;
 	TwofishKey twKey;
 
@@ -21,7 +20,7 @@ void FlagDecrypt(const uint8_t* key, const uint8_t* iv, const uint8_t* cipher, u
 	memcpy(decrypted, cipherResult, 64);
 }
 
-void FlagEncrypt(const uint8_t* key, const uint8_t* iv, const uint8_t* flag, uint8_t* encrypted){
+void FlagEncrypt(const uint8_t key[flag_key_len], const uint8_t iv[flag_iv_len], const char flag[flag_len], uint8_t encrypted[flag_len]){
 	Twofish crypt;
 	TwofishKey twKey;
 

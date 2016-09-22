@@ -11,5 +11,5 @@ const static size_t flag_len = 64;
 //Key: 32bytes
 //IV:  16bytes
 //Flag:64bytes
-void FlagEncrypt(const uint8_t key[flag_key_len], const uint8_t iv[flag_iv_len], const uint8_t flag[flag_len], uint8_t* encrypted);
-void FlagDecrypt(const uint8_t key[flag_key_len], const uint8_t iv[flag_iv_len], const uint8_t cipher[flag_len], uint8_t* decrypted);
+void FlagEncrypt(const uint8_t key[flag_key_len], const uint8_t iv[flag_iv_len], const char flag[flag_len], uint8_t encrypted[flag_len]);
+void FlagDecrypt(const uint8_t key[flag_key_len], const uint8_t iv[flag_iv_len], const uint8_t cipher[flag_len], char decrypted[flag_len]);
