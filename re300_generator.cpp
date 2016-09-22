@@ -17,7 +17,6 @@ int main(void){
     uint32_t count = btc.loadblock(fp);
     cout << "Finished loading " << count << " blocks.\n";
 
-    const static char fin_hash_s[]="00000000d66d589aa63025b450d32cc7679e3969d62b240b348332acc16eb582";
     cout << "Verifying " << count << " blocks, \n" <<
             "Using final hash: \n\t" <<
             fin_hash_s << "\n";
@@ -74,15 +73,38 @@ int main(void){
               enc_hash_s);
     cout << "KEY = " << enc_hash_s << "\n";
 
-    cout << "Start to generate encrypted flag..." << endl;
-
-    const static  char preset_flag[] = "xdctf{N3v3r_buy_btc_un1es_u_want_2_know_crypt0_lol_padding_now}";
+    cout << "Start to generate encrypted flag...";
     // make length-1 for end of string
     if ( strlen(preset_flag) != flag_len-1 ){
         cout << "ERROR FLAG LENGTH IS INCORRECT\n";
         exit(-2);
     }
+    uint8_t *flag_to_write=(uint8_t*)malloc(flag_len);
+    FlagEncrypt(crypto_params.dict.key,
+                crypto_params.dict.iv,
+                preset_flag,
+                flag_to_write);
+    char* flag_s=(char*)malloc(flag_len*2+1);
+    memset(flag_s, 0, flag_len*2+1);
+    bytes2hex(flag_to_write,
+              flag_len,
+              flag_s);
+    cout << "generated:\n\t" << flag_s << endl;
 
+    cout << "PREPARING TO WRITE TO THE FILE" << endl;
+    cout << "\tTarget file:" << hn << endl;
+    fp = fopen(hn, "w");
+    free(flag_s);
+    flag_s=(char*)malloc(flag_len*4+1);
+    bytes2hexstring(flag_to_write, flag_len, flag_s);
+    fprintf(fp,
+            "#pragma once\nconst static char flag[%d]=\"%64s\";",
+            flag_len,
+            flag_s );
+    fclose(fp);
+    cout << "\tWrote " << flag_s << endl;
+    free(flag_s);
 
+    free(flag_to_write);
     return 0;    
 }
