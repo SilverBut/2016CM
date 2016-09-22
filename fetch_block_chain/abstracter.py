@@ -14,7 +14,7 @@ with open("blk00000.dat",'rb') as fd:
             print("%d at %d"%(cnt,fd.tell()))
             nf.write(fd.read(80))
             fd.seek(size-80,1)
-            if cnt==5000:
+            if cnt==3400:
                 break
         else:
             break
