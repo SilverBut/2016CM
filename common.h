@@ -2,7 +2,7 @@
 #include <cassert>
 #include <cstring>
 #include <cstdint>
-//#include <cstdio>
+#include <cstdio>
 #include <iostream>
 #include <xmmintrin.h>	//128 op
 #include <immintrin.h>  //256 op
@@ -19,6 +19,7 @@ typedef unsigned int uint;
 
 uint hex2bytes(const char* hex, uint blen, uint8_t* bytes);
 uint bytes2hex(const uint8_t* bytes, uint blen, char* hex);
+uint bytes2hexstring(const uint8_t* bytes, uint blen, char* hex);
 
 void xor_16byte ( uint8_t* dst, uint8_t* src);
 void xor_32byte ( uint8_t* dst, uint8_t* src);

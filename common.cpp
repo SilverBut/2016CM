@@ -56,6 +56,16 @@ uint bytes2hex(const uint8_t* bytes, uint blen, char* hex){
 	return blen*2;
 }
 
+uint bytes2hexstring(const uint8_t* bytes, uint blen, char* hex){
+    for(uint i = 0 ; i < blen ; i++){
+        hex[i*4]='\\';
+        hex[i*4+1]='x';
+        hex[i*4+2] = (uint8_t)(bytes[i]>>4)>9?(bytes[i]>>4)+'A'-0xA:(bytes[i]>>4)+'0';
+        hex[i*4+3] = (uint8_t)(bytes[i]&0xf)>9?(bytes[i]&0xf)+'A'-0xA:(bytes[i]&0xf)+'0';
+    }
+    return blen*4;
+}
+
 uint hex2bytes(const char* hex, uint blen, uint8_t* bytes){
 	uint8_t pos,idx0,idx1;
 	const uint8_t hashmap[] =
