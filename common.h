@@ -2,7 +2,8 @@
 #include <cassert>
 #include <cstring>
 #include <cstdint>
-#include <cstdio>
+//#include <cstdio>
+#include <iostream>
 #include <xmmintrin.h>	//128 op
 #include <immintrin.h>  //256 op
 #include "flag.h"
@@ -10,6 +11,9 @@
 #define DEBUG
 
 #define CLASS_CONSTANT const static
+
+using std::cout;
+using std::endl;
 
 typedef unsigned int uint;
 
