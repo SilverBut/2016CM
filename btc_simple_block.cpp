@@ -81,7 +81,7 @@ bool BitChain::mining(const uint8_t last_hash[Block_simple::HASH_LENGTH]){
     list<Block_simple>::iterator it_chain;
     it_chain = this->blist.begin();
     uint8_t *target_hash = (uint8_t*)malloc(Block_simple::HASH_LENGTH);
-    int i = 1 ;
+    uint32_t i = 1 ;
 
     do{
         if ( i == this->blist.size() ){

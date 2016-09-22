@@ -6,8 +6,10 @@
 #include <iostream>
 #include <xmmintrin.h>	//128 op
 #include <immintrin.h>  //256 op
+#ifdef IS_PROBLEM
+#include "flag.h"
+#endif
 #include "flag_coder.h"
-#define DEBUG
 
 #define CLASS_CONSTANT const static
 
