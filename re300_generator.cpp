@@ -98,7 +98,7 @@ int main(void){
     flag_s=(char*)malloc(flag_len*4+1);
     bytes2hexstring(flag_to_write, flag_len, flag_s);
     fprintf(fp,
-            "#pragma once\nconst static uint8_t flag[%zu]=\"%64s\";",
+            "#pragma once\nconst static uint8_t flag[%zu]=\"%s\";",
             flag_len+1, //another bugfix for c-str
             flag_s );
     fclose(fp);
