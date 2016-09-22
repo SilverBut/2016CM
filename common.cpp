@@ -1,4 +1,28 @@
 #include "common.h"
+void hex_swaporder(char* bytes, size_t length){
+    length*=2;
+    for ( size_t i = 0 ; i < length/2 ; i+=2 ){
+        char tmp;
+        tmp = bytes[i];
+        bytes[i]=bytes[length-i-1-1];
+        bytes[length-i-1-1]=tmp;
+        tmp = bytes[i+1];
+        bytes[i+1]=bytes[length-i-1];
+        bytes[length-i-1]=tmp;
+    }  
+    return;
+}
+
+void bin_swaporder(uint8_t* bytes, size_t length){
+    for ( size_t i = 0 ; i < length/2 ; i++ ){
+        uint8_t tmp;
+        tmp = bytes[i];
+        bytes[i]=bytes[length-i-1];
+        bytes[length-i-1]=tmp;
+    }    
+    return;
+}
+
 
 void long_xor( uint8_t* dst, uint8_t* src, size_t length){
 	for ( size_t i = 0 ; i*16 < length ; i++ ){
