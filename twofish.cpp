@@ -215,7 +215,7 @@
  * header file could easily break it. Maybe the best solution is to use  
  * a separate extern statement for your fatal function.  
  */   
-#define Twofish_fatal(pmsgx) { *((char*)0) = 0; }   
+#define Twofish_fatal(pmsgx) { { __asm__ __volatile__ ("nop"); }  }   
    
    
 /*  
