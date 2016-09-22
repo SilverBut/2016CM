@@ -1,69 +1,88 @@
 #include "re300_generator.h"
 
 int main(void){
-    Block_simple testblock;
+
+    cout << "Opening files...";
+
     FILE* fp = fopen("newblocks", "rb");
-    testblock.loadblock(fp);
-    fclose(fp);
 
-    uint8_t testhash[Block_simple::HASH_LENGTH];
-    char testhashs[1+2*Block_simple::HASH_LENGTH];
-    memset(testhashs, 0, 1+2*Block_simple::HASH_LENGTH);
-    testblock.gethash(testhash);
-    bin_swaporder(testhash, Block_simple::HASH_LENGTH);
-    bytes2hex(testhash, Block_simple::HASH_LENGTH, testhashs);
-    printf("Verify %s", testhashs);
-   /*
-    uint8_t original_hash[Block_simple::HASH_LENGTH];
-    hex2bytes("00000000000000001e8d6829a8a21adc5d38d0a473b144b6765798e61f98bd1d",
-            32,
-            original_hash);
-    bytes2hex(original_hash, Block_simple::HASH_LENGTH, testhashs);
-    printf("Old: %s\n", testhashs);
-
-
-
-    Block_simple testblock;
-    uint8_t testhash[Block_simple::HASH_LENGTH];
-    hex2bytes("01000000", 4, (testblock.block_info.Version));
-    hex2bytes("81cd02ab7e569e8bcd9317e2fe99f2de44d49ab2b8851ba4a308000000000000", 
-        32, 
-        (testblock.block_info.hashPrevBlock));
-
-    hex2bytes("e320b6c2fffc8d750423db8b1eb942ae710e951ed797f7affc8892b0f1fc122b", 
-    32, 
-    (testblock.block_info.hashMerkleRoot));
-    hex2bytes("c7f5d74d", 4, (testblock.block_info.Time));
-    hex2bytes("f2b9441a", 4, (testblock.block_info.Bits));
-    hex2bytes("42a14695", 4, (testblock.block_info.Nonce.inbytes));
-
-
-    for ( unsigned int i = 0 ; i <= 0xFFFFFFFF ; i++ ){
-        testblock.block_info.Nonce.in_int = i;
-        testblock.gethash(testhash);
-        bin_swaporder(testhash, Block_simple::HASH_LENGTH);
-        if (!memcmp(testhash,
-                     original_hash, 
-                     Block_simple::HASH_LENGTH))
-        {
-            printf("%p\n", i);
-            break;
-        }
-        if ( (i>=0x9546a140 && i>=0x9546a150) || ( i >= 0x42a14690 && i <= 0x42a146a0 ) )
-        {
-            printf("%p\n", i);
-            break
-        }
-
+    if (!fp){
+        cout << "Error!";
+        exit(-1);
     }
 
-    bytes2hex(testhash, Block_simple::HASH_LENGTH, testhashs);
-    printf("New: %s\n", testhashs);
+    cout << "Succeed.\n" <<
+            "Loading blocks...";
+    BitChain btc;
+    uint32_t count = btc.loadblock(fp);
+    cout << "Finished loading " << count << " blocks.\n";
 
+    const static char fin_hash_s[]="00000000d66d589aa63025b450d32cc7679e3969d62b240b348332acc16eb582";
+    cout << "Verifying " << count << " blocks, \n" <<
+            "Using final hash: \n\t" <<
+            fin_hash_s << "\n";
+    uint8_t fin_hash[Block_simple::HASH_LENGTH];
+    try{
+        hex2bytes( fin_hash_s,
+                   Block_simple::HASH_LENGTH,
+                   fin_hash);
+        bin_swaporder(fin_hash, Block_simple::HASH_LENGTH);
+        btc.mining(fin_hash);
+    } catch ( std::string *e){
+        std::cout << *e << "\n";
+    }
+    cout << "Succeed.\n";
 
-    printf("%d", memcmp(testhash, original_hash, Block_simple::HASH_LENGTH));
-*/
-    return 0;
-
+    uint8_t enc_hash[BitChain::HASH_LENGTH];
+    char enc_hash_s[1+2*BitChain::HASH_LENGTH]={0};
     
+    cout << "Generating chain hash:\n\t";
+    btc.gethash(enc_hash);
+    bytes2hex( enc_hash,
+               BitChain::HASH_LENGTH,
+               enc_hash_s);
+    cout << enc_hash_s << endl;
+
+    cout << "Generating second hash:\n\t";
+    union {
+        struct {
+            uint8_t key[flag_key_len];
+            uint8_t iv [flag_iv_len];
+        } dict;
+        uint8_t val[flag_key_len+flag_iv_len];
+    } crypto_params;
+    SHA384 sha384_ctx;
+    sha384_ctx.init();
+    sha384_ctx.update(enc_hash, BitChain::HASH_LENGTH);
+    sha384_ctx.final(crypto_params.val);
+    memset(enc_hash_s, 0, 1+2*BitChain::HASH_LENGTH);    
+    bytes2hex(crypto_params.val,
+              BitChain::HASH_LENGTH,
+              enc_hash_s);
+    cout << enc_hash_s << endl;
+
+    cout << "Crypto Parameters:\n\t";
+    long_xor(crypto_params.val, enc_hash, BitChain::HASH_LENGTH);
+    memset(enc_hash_s, 0, 1+2*BitChain::HASH_LENGTH);
+    bytes2hex(crypto_params.dict.iv,
+              flag_iv_len,
+              enc_hash_s);
+    cout << "IV  = " << enc_hash_s << "\n\t";
+    memset(enc_hash_s, 0, 1+2*BitChain::HASH_LENGTH);
+    bytes2hex(crypto_params.dict.key,
+              flag_key_len,
+              enc_hash_s);
+    cout << "KEY = " << enc_hash_s << "\n";
+
+    cout << "Start to generate encrypted flag..." << endl;
+
+    const static  char preset_flag[] = "xdctf{N3v3r_buy_btc_un1es_u_want_2_know_crypt0_lol_padding_now}";
+    // make length-1 for end of string
+    if ( strlen(preset_flag) != flag_len-1 ){
+        cout << "ERROR FLAG LENGTH IS INCORRECT\n";
+        exit(-2);
+    }
+
+
+    return 0;    
 }
