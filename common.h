@@ -6,7 +6,6 @@
 #include <iostream>
 #include <xmmintrin.h>	//128 op
 #include <immintrin.h>  //256 op
-#include "flag.h"
 #include "flag_coder.h"
 #define DEBUG
 
