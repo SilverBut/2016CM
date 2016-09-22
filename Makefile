@@ -1,7 +1,7 @@
 #CXX = g++
 #CXXFLAGS = -g -Wall -O4 -mavx -lcrypto -std=c++11
 CXX = clang++
-CXXFLAGS = -g -Wall -O3 -mavx -std=c++11 
+CXXFLAGS = -g -Wall -O3 -mavx -std=c++11
 # -lcrypto 
 
 PROGRAMS = problem generator
