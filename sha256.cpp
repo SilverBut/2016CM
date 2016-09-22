@@ -70,7 +70,7 @@ void SHA256::init()
     m_tot_len = 0;
 }
  
-void SHA256::update(const unsigned char *message, unsigned int len)
+void SHA256::update(const unsigned char *message, const unsigned int len)
 {
     unsigned int block_nb;
     unsigned int new_len, rem_len, tmp_len;

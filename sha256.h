@@ -15,7 +15,7 @@ protected:
     static const unsigned int SHA224_256_BLOCK_SIZE = (512/8);
 public:
     void init();
-    void update(const unsigned char *message, unsigned int len);
+    void update(const unsigned char *message, const unsigned int len);
     void final(unsigned char *digest);
     static const unsigned int DIGEST_SIZE = ( 256 / 8);
  
