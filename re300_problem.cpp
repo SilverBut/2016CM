@@ -3,7 +3,7 @@ int main(void){
 	
     cout << "Opening files...";
 
-    FILE* fp = fopen("newblocks", "rb");
+    FILE* fp = fopen("magic_file", "rb");
 
     if (!fp){
         cout << "Error!";
@@ -18,7 +18,8 @@ int main(void){
 
     cout << "Verifying " << count << " blocks, \n" <<
             "Using final hash: \n\t" <<
-            fin_hash_s << "\n";
+            //fin_hash_s << "\n";
+            "Unknown!" << "\n";
     uint8_t fin_hash[Block_simple::HASH_LENGTH];
     try{
         hex2bytes( fin_hash_s,
